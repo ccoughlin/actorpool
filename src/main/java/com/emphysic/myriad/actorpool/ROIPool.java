@@ -23,12 +23,9 @@ import com.emphysic.myriad.core.data.roi.ROIBundle;
 import com.emphysic.myriad.network.ROIFinderPool;
 import com.typesafe.config.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.IOUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
+import java.io.*;
 
 /**
  *ROIPool - a pool of Region Of Interest (ROI) detectors.
@@ -50,12 +47,15 @@ public class ROIPool extends ActorPool {
         File roiFile = new File(roiPath);
         if (!roiFile.canRead()) {
             // Check the resources folder
-            log.info("Didn't find ROIBundle, checking resources...");
-            URL resource = ROIPool.class.getResource(roiPath);
+            log.info("Didn't find ROIBundle from '" + roiPath + "', checking resources...");
             try {
-                roiFile = Paths.get(resource.toURI()).toFile();
-            } catch (URISyntaxException use) {
-                log.error("Unable to construct URL from '" + resource + "'");
+                InputStream inputStream = ROIPool.class.getResourceAsStream(roiPath);
+                roiFile = File.createTempFile("myriad_model", ".myr");
+                OutputStream outputStream = new FileOutputStream(roiFile);
+                IOUtils.copy(inputStream, outputStream);
+                outputStream.close();
+            } catch (IOException e) {
+                log.error("Error encountered reading model from resources: " + e.getLocalizedMessage());
                 return false;
             }
             if (!roiFile.canRead()) {
