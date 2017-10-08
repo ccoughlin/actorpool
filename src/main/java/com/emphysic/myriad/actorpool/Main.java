@@ -46,10 +46,14 @@ public class Main {
         Config cfg = ConfigFactory.parseFile(cfgFile);
         String mode = cfg.getString("actorpool.mode");
         String clsPath = mode + ".cls";
+        String systemName = "MyriadActorPool";
+        if (cfg.hasPath("actorpool.name")) {
+            systemName = cfg.getString("actorpool.name");
+        }
         try {
             Class<?> clazz = Class.forName(cfg.getString(clsPath));
-            Constructor<?> constructor = clazz.getConstructor(Config.class);
-            Object pool = constructor.newInstance(cfg);
+            Constructor<?> constructor = clazz.getConstructor(Config.class, String.class);
+            Object pool = constructor.newInstance(cfg, systemName);
             log.info("Successfully instantiated pool " + pool.toString() + ", waiting for connections.");
         } catch (ClassNotFoundException cnfe) {
             log.error("Unable to find class '" + clsPath + "': " + cnfe.getLocalizedMessage());

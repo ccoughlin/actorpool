@@ -41,9 +41,9 @@ public class WindowPool extends ActorPool {
      */
     private int windowHeight;
 
-    public WindowPool(Config config) {
-        super(config, "MyriadWindowPool");
-        log.info("Instantiating WindowPool");
+    public WindowPool(Config config, String poolName) {
+        super(config, poolName);
+        log.info("Instantiated Sliding Window pool '" + poolName + "'");
     }
 
     public boolean startup() {

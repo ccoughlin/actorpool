@@ -37,9 +37,9 @@ public class ROIPool extends ActorPool {
      */
     private ROIBundle roiBundle;
 
-    public ROIPool(Config config) {
-        super(config, "MyriadROIPool");
-        log.info("Initiating ROIPool");
+    public ROIPool(Config config, String poolName) {
+        super(config, poolName);
+        log.info("Instantiated Region Of Interest pool '" + poolName + "'");
     }
 
     public boolean startup() {
